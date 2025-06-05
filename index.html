@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>CSGO虚拟交易平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: url('tpjpg/1.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    margin: 0;
+    /* 可选：让背景图片更暗一点，突出前景 */
+    /* filter: brightness(0.85); */
+}
+
+/* 顶部 header 普通背景 */
+header {
+    background: none;
+    padding: 28px 0 22px 0;
+    text-align: center;
+    border-radius: 0 0 18px 18px;
+    box-shadow: none;
+}
+
+/* 标题普通白色字体 */
+header h1 {
+    font-size: 2.6em;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: 'FZYaoti', 'STXingkai', '华文行楷', '行楷', 'KaiTi', '楷体', cursive, serif;
+    color: transparent;
+    background: linear-gradient(90deg, #888 0%, #e0e0e0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 0 2px 8px #000a;
+    transition: background-image 0.5s;
+}
+
+/* 功能栏普通背景 */
+.function-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+    margin: 28px 0 16px 0;
+    background: none;
+    box-shadow: none;
+    padding: 18px 0 10px 0;
+    border-radius: 12px;
+}
+.function-bar .buy-btn {
+    margin: 0;
+    min-width: 100px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* 搜索栏玻璃模糊效果（保留） */
+.search-bar {
+    margin: 24px auto 0 auto;
+    text-align: center;
+    background: rgba(35, 39, 42, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 10px;
+    padding: 12px 0 8px 0;
+    width: 90vw;
+    max-width: 600px;
+}
+.search-bar input {
+    width: 320px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+    background: #23272a;
+    color: #fff;
+    margin-right: 8px;
+}
+
+/* 商品卡片玻璃模糊效果（保留） */
+.item {
+    background: rgba(35, 39, 42, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 20px 16px 22px 16px;
+    width: 250px;
+    box-shadow: 0 2px 16px #0004;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.22s cubic-bezier(.4,2,.6,1), box-shadow 0.22s;
+    margin-bottom: 10px;
+    position: relative;
+}
+.item:hover {
+    transform: translateY(-8px) scale(1.04) rotateZ(-1deg);
+    box-shadow: 0 8px 32px #000a, 0 2px 8px #23272a;
+    z-index: 2;
+}
+
+/* 商品图片美化 */
+.item img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.12);
+    margin-bottom: 8px;
+}
+
+/* 商品标题和信息 */
+.item-title {
+    font-size: 19px;
+    margin: 12px 0 7px;
+    text-align: center;
+    font-weight: bold;
+}
+.item-seller, .item-stock, .item-history {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 2px;
+}
+.item-price {
+    color: #43b581;
+    font-weight: bold;
+    margin: 8px 0 10px 0;
+    font-size: 18px;
+}
+
+/* 按钮组优化 */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+    gap: 10px;
+    flex-direction: row-reverse;
+}
+.buy-btn, .history-link {
+    border-radius: 6px;
+    font-size: 15px;
+    padding: 8px 18px;
+    transition: transform 0.12s, box-shadow 0.12s, background 0.18s;
+    will-change: transform;
+}
+.buy-btn:active, .history-link:active {
+    transform: scale(0.93);
+    box-shadow: 0 2px 8px #0006;
+    background: #5865f2 !important;
+}
+.buy-btn:hover, .history-link:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 16px #23272a44;
+}
+
+/* 让商品大厅自适应居中排列 */
+.items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px 24px;
+    padding: 30px 0 40px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 各弹窗玻璃效果 */
+#orders-modal .modal-content,
+#history-modal .modal-content,
+#about-modal > div,
+#help-modal > div,
+#shop-modal > div,
+#admin-modal > div,
+#profile-modal > div,
+#service-modal > div,
+#myshop-modal > div {
+    background: rgba(35, 39, 42, 0.55) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 24px #000a;
+    border-radius: 10px;
+}
+
+/* 让弹窗遮罩也更柔和 */
+#orders-modal, #history-modal, #about-modal, #service-modal, #help-modal, #shop-modal, #admin-modal, #profile-modal, #myshop-modal {
+    background: rgba(0,0,0,0.35) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+/* 优化订单交易记录弹窗样式 */
+#orders-modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(2px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+#orders-modal .modal-content {
+    background: rgba(35,39,42,0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    min-width: 340px;
+    max-width: 95vw;
+    box-shadow: 0 4px 24px #000a;
+    text-align: left;
+    position: relative;
+    padding: 32px 28px 24px 28px;
+}
+#orders-modal h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    color: #43b581;
+    font-size: 1.5em;
+    text-align: center;
+    letter-spacing: 2px;
+}
+#orders-list table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto 8px auto;
+    background: rgba(44,47,51,0.7);
+    border-radius: 10px;
+    overflow: hidden;
+}
+#orders-list th, #orders-list td {
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 15px;
+}
+#orders-list th {
+    background: rgba(67,181,129,0.13);
+    color: #43b581;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+}
+#orders-list tr {
+    border-bottom: 1px solid #222;
+}
+#orders-list tr:last-child {
+    border-bottom: none;
+}
+#orders-list td {
+    color: #fff;
+}
+#orders-list .highlight {
+    background: rgba(67,181,129,0.18) !important;
+    color: #43b581 !important;
+}
+#orders-list .empty {
+    color: #aaa;
+    text-align: center;
+    padding: 24px 0;
+}
+#orders-modal .buy-btn {
+    margin: 0 6px;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 6px 18px;
+}
+#orders-modal #orders-close-x {
+    position: absolute;
+    right: 16px; top: 12px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 26px;
+    cursor: pointer;
+    transition: color 0.18s;
+}
+#orders-modal #orders-close-x:hover {
+    color: #43b581;
+}
+#orders-list .pagination {
+    margin: 12px 0 0 0;
+    text-align: center;
+}
+#orders-list .pagination span {
+    color: #aaa;
+    margin: 0 8px;
+    font-size: 15px;
+}
+#history-modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.35) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 2100;
+    justify-content: center;
+    align-items: center;
+}
+
+#history-modal .modal-content {
+    background: rgba(35, 39, 42, 0.65) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px #000b;
+    border-radius: 22px;
+    min-width: 420px;
+    max-width: 99vw;
+    width: 700px;
+    padding: 44px 36px 32px 36px;
+    text-align: center;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#history-modal h2 {
+    font-size: 1.45em;
+    margin-bottom: 22px;
+    color: #43b581;
+    letter-spacing: 1.5px;
+}
+
+#priceChart {
+    width: 100% !important;
+    height: 380px !important;
+    max-width: 900px;
+    min-width: 600px;
+    margin: 0 auto 20px auto;
+    display: block;
+    background: transparent;
+}
+
+#close-history-modal {
+    margin-top: 22px !important;
+    font-size: 18px;
+    padding: 10px 44px;
+    border-radius: 10px;
+}
+
+@media (max-width: 900px) {
+    #history-modal .modal-content {
+        width: 98vw;
+        min-width: 0;
+        padding: 12px 2vw 12px 2vw;
+    }
+    #priceChart {
+        max-width: 96vw;
+        height: 220px !important;
+    }
+}
+
+/* 租赁模块样式 */
+#rent-modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6);
+    z-index: 2100;
+    justify-content: center;
+    align-items: center;
+}
+
+#rent-modal .modal-content {
+    background: rgba(35, 39, 42, 0.8);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 18px;
+    min-width: 360px;
+    max-width: 95vw;
+    padding: 36px 28px;
+    box-shadow: 0 8px 32px #000b;
+    position: relative;
+    overflow: hidden;
+}
+
+#rent-modal h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #43b581;
+    font-size: 1.6em;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.rent-card {
+    background: rgba(35,39,42,0.7);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #0004;
+    width: 220px;
+    padding: 16px 12px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+.rent-card.selected {
+    border: 2px solid #43b581;
+}
+.rent-card img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+.rent-card .rent-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #fff;
+    text-align: center;
+}
+.rent-card .rent-info {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 2px;
+}
+.rent-card .rent-price {
+    color: #43b581;
+    font-weight: bold;
+    margin: 8px 0 10px 0;
+    font-size: 15px;
+}
+.rent-buy-btn {
+    background: linear-gradient(90deg, #43b581 0%, #2e8b57 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 18px;
+    font-size: 14px;
+    margin-top: 6px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s;
+}
+.rent-buy-btn:hover {
+    background: linear-gradient(90deg, #2e8b57 0%, #43b581 100%);
+    filter: brightness(1.08);
+}
+
+/* 订单详情样式 */
+#order-detail-modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    z-index: 2200;
+    justify-content: center;
+    align-items: center;
+}
+
+#order-detail-modal .modal-content {
+    background: rgba(35, 39, 42, 0.9);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 18px;
+    min-width: 400px;
+    max-width: 90vw;
+    padding: 36px 28px;
+    box-shadow: 0 8px 32px #000b;
+    position: relative;
+    overflow: hidden;
+}
+
+#order-detail-modal h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #43b581;
+    font-size: 1.6em;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.order-detail-item {
+    margin-bottom: 18px;
+}
+.order-detail-item label {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+}
+.order-detail-item .value {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 申请店铺弹窗样式 */
+#apply-shop-modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    z-index: 2300;
+    justify-content: center;
+    align-items: center;
+}
+
+#apply-shop-modal .modal-content {
+    background: rgba(35, 39, 42, 0.9);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 18px;
+    min-width: 400px;
+    max-width: 90vw;
+    padding: 36px 28px;
+    box-shadow: 0 8px 32px #000b;
+    position: relative;
+    overflow: hidden;
+}
+
+#apply-shop-modal h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #43b581;
+    font-size: 1.6em;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+#apply-shop-modal input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    margin-bottom: 18px;
+    font-size: 15px;
+}
+
+#apply-shop-modal button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: linear-gradient(90deg, #43b581 0%, #2e8b57 100%);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.18s;
+}
+#apply-shop-modal button:hover {
+    background: linear-gradient(90deg, #2e8b57 0%, #43b581 100%);
+    transform: translateY(-2px);
+}
+
+/* 管理员后台管理样式 */
+#admin-modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.9);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+}
+
+#admin-modal .modal-content {
+    background: rgba(35, 39, 42, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 18px;
+    min-width: 480px;
+    max-width: 90vw;
+    padding: 36px 28px;
+    box-shadow: 0 8px 32px #000b;
+    position: relative;
+    overflow: hidden;
+}
+
+#admin-modal h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #43b581;
+    font-size: 1.6em;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+#admin-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-top: 12px;
+}
+
+#admin-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18px;
+}
+#admin-content th, #admin-content td {
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #444;
+}
+#admin-content th {
+    background: rgba(67,181,129,0.13);
+    color: #43b581;
+    font-weight: bold;
+}
+#admin-content tr {
+    background: rgba(255,255,255,0.02);
+    transition: background 0.18s;
+}
+#admin-content tr:hover {
+    background: rgba(67,181,129,0.08);
+}
+
+/* 租赁操作提示弹窗样式 */
+#rent-action-modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2500;
+    justify-content: center;
+    align-items: center;
+}
+#rent-action-modal .modal-content {
+    background: rgba(44, 47, 51, 0.97);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 16px;
+    min-width: 280px;
+    max-width: 90vw;
+    box-shadow: 0 8px 32px #000b;
+    padding: 32px 28px 24px 28px;
+    position: relative;
+    text-align: center;
+}
+#rent-action-modal h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #43b581;
+    font-size: 1.6em;
+    text-align: center;
+    letter-spacing: 2px;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CSGO虚拟交易平台</h1>
+    </header>
+    <!-- 功能入口栏 -->
+    <div class="function-bar">
+        <button class="buy-btn">购买大厅</button>
+        <button class="buy-btn" id="btn-shop">店铺</button>
+        <button class="buy-btn" id="btn-rent">租赁</button>
+        <button class="buy-btn" id="btn-orders">订单交易记录</button>
+        <button class="buy-btn" id="btn-profile">个人中心</button>
+        <button class="buy-btn" id="btn-help">帮助中心</button>
+        <button class="buy-btn" id="btn-service">在线客服</button>
+        <button class="buy-btn" id="btn-about">关于我们</button>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="搜索饰品、武器..." />
+        <button class="buy-btn">搜索</button>
+    </div>
+    <div class="items">
+        <div class="item">
+            <img src="https://img.picui.cn/free/2025/06/03/683f12ded973a.png" alt="AK-47  火蛇 (略有磨损)" title="AK-47  火蛇 (略有磨损)" />
+            <div class="item-title">AK-47 | 火蛇 (略有磨损)</div>
+            <div class="item-seller">卖家：小明</div>
+            <div class="item-stock">库存：5</div>
+            <div class="item-history">历史均价：￥12000.00</div>
+            <div class="item-price">￥11526.00</div>
+            <div class="button-group">
+                <button class="buy-btn">购买</button>
+                <button class="buy-btn history-link" 0>查看历史价格曲线</button>
+            </div>
+        </div>
+        <div class="item">
+            <img src="https://img.picui.cn/free/2025/06/03/683f162dd544d.png" alt="AWP 美杜莎 (崭新出厂)" title="AWP 美杜莎 (崭新出厂)" />
+            <div class="item-title">AWP | 美杜莎 (崭新出厂)</div>
+            <div class="item-seller">卖家：小李</div>
+            <div class="item-stock">库存：2</div>
+            <div class="item-history">历史均价：￥40000.00</div>
+            <div class="item-price">￥38756.00</div>
+            <div class="button-group">
+                <button class="buy-btn">购买</button>
+                <button class="buy-btn history-link" 0>查看历史价格曲线</button>
+            </div>
+        </div>
+        <div class="item">
+            <img src="https://img.picui.cn/free/2025/06/03/683f19bb4d5ec.png" alt="M4A4 龙王 (久经沙场)" title="M4A4 龙王 (久经沙场)" />
+            <div class="item-title">M4A4 | 龙王 (久经沙场)</div>
+            <div class="item-seller">卖家：小王</div>
+            <div class="item-stock">库存：10</div>
+            <div class="item-history">历史均价：￥120.00</div>
+            <div class="item-price">￥100.00</div>
+            <div class="button-group">
+                <button class="buy-btn">购买</button>
+                <button class="buy-btn history-link" 0>查看历史价格曲线</button>
+            </div>
+        </div>
+        <div class="item">
+            <img src="https://img.picui.cn/free/2025/06/03/683f19ba54d17.png" alt="USP 消音版 力矩 (略有磨损)" title="USP 消音版 力矩 (略有磨损)" />
+            <div class="item-title">USP 消音版 | 力矩 (略有磨损)</div>
+            <div class="item-seller">卖家：小赵</div>
+            <div class="item-stock">库存：20</div>
+            <div class="item-history">历史均价：￥15.00</div>
+            <div class="item-price">￥10.00</div>
+            <div class="button-group">
+                <button class="buy-btn">购买</button>
+                <button class="buy-btn history-link" 0>查看历史价格曲线</button>
+            </div>
+        </div>
+        <div class="item">
+            <img src="https://img.picui.cn/free/2025/06/03/683f1b1ecbc66.png" alt="USP 消音版 枪响人亡 (崭新出厂)" title="USP 消音版 枪响人亡 (崭新出厂)" />
+            <div class="item-title">USP 消音版 | 枪响人亡 (崭新出厂)</div>
+            <div class="item-seller">卖家：小孙</div>
+            <div class="item-stock">库存：3</div>
+            <div class="item-history">历史均价：￥700.00</div>
+            <div class="item-price">￥650.00</div>
+            <div class="button-group">
+                <button class="buy-btn">购买</button>
+                <button class="buy-btn history-link" 0>查看历史价格曲线</button>
+            </div>
+        </div>
+        <div class="item">
+            <img src="https://img.picui.cn/free/2025/06/03/683f1b1ec0c07.png" alt="二西莫夫 (略有磨损)" title="二西莫夫 (略有磨损)" />
+            <div class="item-title">AWP | 二西莫夫 (略有磨损)</div>
+            <div class="item-seller">卖家：小周</div>
+            <div class="item-stock">库存：1</div>
+            <div class="item-history">历史均价：￥2500.00</div>
+            <div class="item-price">￥2200.00</div>
+            <div class="button-group">
+                <button class="buy-btn">购买</button>
+                <button class="buy-btn history-link" 0>查看历史价格曲线</button>
+            </div>
+        </div>
+    </div>
+    <!-- 登录/注册 模态框 -->
+    <div id="login-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:999;justify-content:center;align-items:center;">
+        <div style="background:#23272a;padding:32px 24px;border-radius:8px;min-width:300px;box-shadow:0 2px 12px #000a;text-align:center;">
+            <h2 style="margin-bottom:16px;">登录 / 注册</h2>
+            <input id="login-username" type="text" placeholder="用户名" style="width:90%;padding:8px;margin-bottom:12px;border-radius:4px;border:none;"><br>
+            <input id="login-password" type="password" placeholder="密码" style="width:90%;padding:8px;margin-bottom:16px;border-radius:4px;border:none;"><br>
+            <button id="login-submit" class="buy-btn" style="width:100%;">登录</button>
+            <button id="register-submit" class="buy-btn" style="width:100%;margin-top:8px;background:#43b581;">注册</button>
+            <div style="margin-top:12px;">
+                <button id="login-close" class="buy-btn" style="background:#aaa;color:#23272a;">关闭</button>
+            </div>
+            <div id="login-msg" style="color:#f66;margin-top:10px;"></div>
+        </div>
+    </div>
+    <!-- 订单交易记录模态框 -->
+    <div id="orders-modal">
+        <div class="modal-content">
+            <h2>订单交易记录</h2>
+            <div id="orders-list"></div>
+            
+        </div>
+    </div>
+    <!-- 历史价格曲线模态框 -->
+    <div id="history-modal">
+        <div class="modal-content">
+            <h2 id="history-title">历史价格曲线</h2>
+            <canvas id="priceChart" width="350" height="200"></canvas>
+            <button id="close-history-modal" class="buy-btn" style="background:#aaa;color:#23272a;margin-top:16px;">关闭</button>
+        </div>
+    </div>
+    <!-- 关于我们模态框 -->
+    <div id="about-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2000;justify-content:center;align-items:center;">
+        <div style="background:#23272a;padding:32px 28px;border-radius:10px;min-width:320px;max-width:90vw;box-shadow:0 4px 24px #000a;text-align:left;position:relative;">
+            <button id="about-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            <h2 style="margin-top:0;">关于平台</h2>
+            <div style="line-height:2;font-size:16px;color:#eee;">
+                CSGO虚拟交易平台，致力于为玩家提供安全、便捷的饰品交易服务。<br>
+                <b>平台特色：</b><br>
+                1. 实时价格曲线，行情透明<br>
+                2. 多样化商品，丰富选择<br>
+                3. 订单管理，交易有保障<br>
+                4. 个人中心，信息可编辑<br>
+                <br>
+                如有疑问请联系客服，祝您交易愉快！
+            </div>
+        </div>
+    </div>
+    <!-- 客服模态框 -->
+    <div id="service-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:1500;justify-content:center;align-items:center;">
+        <div style="background:#23272a;padding:0 0 24px 0;border-radius:16px;min-width:320px;max-width:95vw;box-shadow:0 6px 32px #000a;width:410px;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="background:#2c2f33;padding:18px 24px 12px 24px;display:flex;align-items:center;gap:12px;">
+                <img src="https://img.icons8.com/color/48/000000/robot-2.png" alt="客服" style="width:38px;height:38px;border-radius:50%;background:#fff;">
+                <div style="flex:1;">
+                    <div style="font-size:18px;font-weight:bold;color:#fff;">在线客服</div>
+                    <div style="font-size:12px;color:#aaa;">为您服务中...</div>
+                </div>
+                <button id="service-close" style="background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            </div>
+            <div id="service-chat" style="flex:1;max-height:320px;overflow-y:auto;padding:18px 18px 0 18px;background:#23272a;">
+                <div class="chat-bubble bot" style="margin-bottom:10px;">
+                    <img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;vertical-align:middle;margin-right:6px;">
+                    <span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">您好，请问有什么可以帮您？<br>您可以输入：<br>
+                    <b>1. 如何购买</b><br>
+                    <b>2. 如何提现</b><br>
+                    <b>3. 联系方式</b></span>
+                </div>
+            </div>
+            <div style="padding:14px 18px 0 18px;display:flex;gap:8px;">
+                <input id="service-input" type="text" placeholder="输入您的问题..." style="flex:1;padding:10px 12px;border-radius:20px;border:none;font-size:15px;background:#2c2f33;color:#fff;">
+                <button id="service-send" class="buy-btn" style="flex-shrink:0;border-radius:20px;padding:0 20px;height:38px;">发送</button>
+            </div>
+        </div>
+    </div>
+    <!-- 帮助中心模态框 -->
+    <div id="help-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2000;justify-content:center;align-items:center;">
+        <div style="background:#23272a;padding:32px 28px;border-radius:10px;min-width:320px;max-width:90vw;box-shadow:0 4px 24px #000a;text-align:left;position:relative;">
+            <button id="help-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            <h2 style="margin-top:0;">帮助中心</h2>
+            <div style="line-height:2;font-size:16px;color:#eee;">
+                欢迎来到帮助中心！<br>
+                常见问题：<br>
+                1. 如何购买商品？<br>
+                &nbsp;&nbsp;在商品列表点击“购买”按钮，登录后即可下单。<br>
+                2. 如何查看订单？<br>
+                &nbsp;&nbsp;点击页面上方“订单交易记录”按钮可查看您的所有订单。<br>
+                3. 如何联系客服？<br>
+                &nbsp;&nbsp;点击“在线客服”或发送邮件至 support@csgo-platform.com。<br>
+                <br>
+                如有其他疑问，请通过在线客服或邮箱联系我们。
+            </div>
+        </div>
+    </div>
+    <!-- 店铺申请模态框 -->
+    <div id="shop-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2100;justify-content:center;align-items:center;">
+        <div style="background:#23272a;padding:32px 28px;border-radius:10px;min-width:320px;max-width:90vw;box-shadow:0 4px 24px #000a;text-align:left;position:relative;">
+            <button id="shop-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            <h2 style="margin-top:0;">店铺申请</h2>
+            <div style="line-height:2;font-size:16px;color:#eee;">
+                您可以在此注册申请成为平台店铺。<br>
+                <input id="shop-name" type="text" placeholder="店铺名称" style="width:90%;padding:8px;margin:10px 0;border-radius:4px;border:none;"><br>
+                <button id="shop-apply" class="buy-btn" style="width:100%;">提交申请</button>
+                <div id="shop-msg" style="color:#43b581;margin-top:10px;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 租赁模态框 -->
+    <div id="rent-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:2100;justify-content:center;align-items:center;">
+        <div style="background:rgba(44,47,51,0.95);backdrop-filter:blur(18px);border-radius:18px;min-width:340px;max-width:98vw;box-shadow:0 8px 32px #000b;padding:36px 32px 28px 32px;position:relative;">
+            <button id="rent-close" style="position:absolute;right:18px;top:14px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            <h2 style="margin-top:0;color:#43b581;">租赁/购买武器</h2>
+            <div style="margin-bottom:16px;">
+                <select id="rent-sort" style="padding:6px 12px;border-radius:6px;border:none;">
+                    <option value="onsale">在售</option>
+                    <option value="presale">预售</option>
+                    <option value="wanted">求购</option>
+                </select>
+                <button id="rent-batch-buy" class="buy-btn" style="margin-left:16px;">批量购买</button>
+            </div>
+            <div id="rent-goods-list" style="display:flex;flex-wrap:wrap;gap:18px 24px;min-height:60px;"></div>
+        </div>
+    </div>
+    <div id="rent-action-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);z-index:2500;justify-content:center;align-items:center;">
+        <div class="modal-content" style="background:rgba(44,47,51,0.97);backdrop-filter:blur(18px);border-radius:16px;min-width:280px;max-width:90vw;box-shadow:0 8px 32px #000b;padding:32px 28px 24px 28px;position:relative;text-align:center;">
+            <button id="rent-action-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            <div id="rent-action-content" style="font-size:17px;color:#fff;"></div>
+        </div>
+    </div>
+    <script>
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
+
+// 背景图片轮换
+const bgImages = [
+    'tpjpg/1.png',
+    'tpjpg/2.png',
+    'tpjpg/3.png',
+    'tpjpg/4.png',
+    'tpjpg/5.png',
+    'tpjpg/6.jpg'
+];
+
+// 每次刷新随机切换背景
+(function() {
+    // 随机取一张图片
+    const idx = Math.floor(Math.random() * bgImages.length);
+    document.body.style.background = `url('${bgImages[idx]}') no-repeat center center fixed`;
+    document.body.style.backgroundSize = 'cover';
+})();
+
+// 用户信息与登录状态
+let isLogin = false;
+let userInfo = { username: '', email: '', contact: '', avatar: '' };
+if(localStorage.getItem('isLogin') === 'true'){
+    isLogin = true;
+    try {
+        userInfo = JSON.parse(localStorage.getItem('userInfo')) || userInfo;
+    } catch(e) {
+        userInfo = { username: '', email: '', contact: '', avatar: '' };
+    }
+}
+
+// 工具函数
+function getCurrentUsername() {
+    let info = localStorage.getItem('userInfo');
+    if (!info) return null;
+    try {
+        return JSON.parse(info).username || null;
+    } catch {
+        return null;
+    }
+}
+function saveOrderForUser(order) {
+    const username = getCurrentUsername();
+    if (!username) return;
+    let allOrders = JSON.parse(localStorage.getItem('userOrders') || '{}');
+    if (!allOrders[username]) allOrders[username] = [];
+    allOrders[username].push(order);
+    localStorage.setItem('userOrders', JSON.stringify(allOrders));
+}
+function getOrdersForUser() {
+    const username = getCurrentUsername();
+    if (!username) return [];
+    let allOrders = JSON.parse(localStorage.getItem('userOrders') || '{}');
+    return allOrders[username] || [];
+}
+function saveShopForUser(shopName) {
+    const username = getCurrentUsername();
+    if (!username) return;
+    let allShops = JSON.parse(localStorage.getItem('userShops') || '{}');
+    allShops[username] = shopName;
+    localStorage.setItem('userShops', JSON.stringify(allShops));
+}
+function getShopForUser() {
+    const username = getCurrentUsername();
+    if (!username) return null;
+    let allShops = JSON.parse(localStorage.getItem('userShops') || '{}');
+    return allShops[username] || null;
+}
+
+// 保存商品到当前店铺
+function saveShopGoods(shop, goods) {
+    let allGoods = JSON.parse(localStorage.getItem('shopGoods') || '{}');
+    if (!allGoods[shop.owner_username]) allGoods[shop.owner_username] = [];
+    allGoods[shop.owner_username].push(goods);
+    localStorage.setItem('shopGoods', JSON.stringify(allGoods));
+}
+
+// 获取当前店铺的所有商品
+function getShopGoods(shop) {
+    let allGoods = JSON.parse(localStorage.getItem('shopGoods') || '{}');
+    return allGoods[shop.owner_username] || [];
+}
+
+// 判断是否为管理员，隐藏店铺按钮
+function updateShopBtnDisplay() {
+    const shopBtn = document.getElementById('btn-shop');
+    if (!shopBtn) return;
+    if(localStorage.getItem('isAdmin') === 'true'){
+        shopBtn.style.display = 'none';
+    } else {
+        shopBtn.style.display = '';
+    }
+}
+updateShopBtnDisplay();
+
+// 模拟价格数据
+const priceData = {
+    'AK-47 | 火蛇 (略有磨损)': [11800, 11900, 12100, 12200, 12000, 11950, 11850, 11700, 11600, 11500],
+    'AWP | 美杜莎 (崭新出厂)': [38000, 38500, 39000, 39500, 40000, 39800, 39600, 39200, 39100, 38900],
+    'M4A4 | 龙王 (久经沙场)': [110, 112, 115, 118, 120, 119, 117, 116, 115, 113],
+    'USP 消音版 | 力矩 (略有磨损)': [9, 9.5, 10, 10.5, 11, 10.8, 10.6, 10.2, 10, 9.8],
+    'USP 消音版 | 枪响人亡 (崭新出厂)': [620, 630, 640, 650, 660, 655, 650, 645, 640, 635],
+    'AWP | 二西莫夫 (略有磨损)': [2100, 2150, 2200, 2250, 2300, 2280, 2260, 2240, 2220, 2200]
+};
+
+let currentChart = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+    // 购买按钮事件
+    $$('.item').forEach(item => {
+        const buyBtn = item.querySelector('.buy-btn:not(.history-link)');
+        if (buyBtn) {
+            buyBtn.addEventListener('click', () => {
+                if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+                    document.getElementById('login-modal').style.display = 'flex';
+                    return;
+                }
+                const title = item.querySelector('.item-title').innerText;
+                const priceElement = item.querySelector('.item-price');
+                const price = priceElement.innerText.replace(/[\D.]/g, '');
+                const stockElement = item.querySelector('.item-stock');
+                let stock = parseInt(stockElement.innerText.replace(/[^0-9]/g, ''));
+
+                if (stock > 0) {
+                    stock--;
+                    stockElement.innerText = `库存：${stock}`;
+
+                    const orderId = 'OD' + Date.now() + Math.floor(Math.random() * 10000);
+                    const newOrder = { id: orderId, title, price, time: new Date().toLocaleString() };
+                    saveOrderForUser(newOrder);
+
+                    showOrdersModal(orderId, newOrder);
+                } else {
+                    alert('该商品已售罄！');
+                }
+            });
+        }
+    });
+
+    // 历史价格曲线按钮事件
+    $$('.item').forEach(item => {
+        const historyBtn = item.querySelector('.history-link');
+        if (historyBtn) {
+            historyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const itemName = item.querySelector('.item-title').innerText;
+                const prices = priceData[itemName] || [];
+                showHistoryModal(itemName, prices);
+            });
+        }
+    });
+
+    // 订单交易记录按钮
+    $('#btn-orders').addEventListener('click', () => {
+        if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+            document.getElementById('login-modal').style.display = 'flex';
+            return;
+        }
+        showOrdersModal();
+    });
+
+    // 关闭登录弹窗
+    $('#login-close').addEventListener('click', () => {
+        $('#login-modal').style.display = 'none';
+        $('#login-msg').innerText = '';
+    });
+
+    // 帮助中心按钮事件
+    $('#btn-help').addEventListener('click', () => {
+        $('#help-modal').style.display = 'flex';
+    });
+    $('#help-close').addEventListener('click', () => {
+        $('#help-modal').style.display = 'none';
+    });
+
+    // 关于我们按钮事件
+    $('#btn-about').addEventListener('click', () => {
+        $('#about-modal').style.display = 'flex';
+    });
+    $('#about-close').addEventListener('click', () => {
+        $('#about-modal').style.display = 'none';
+    });
+
+    // 个人中心按钮事件
+    $('#btn-profile').addEventListener('click', function(){
+        createProfileModal();
+        if(!isLogin){
+            $('#login-modal').style.display = 'flex';
+        }else{
+            let userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+            document.getElementById('profile-username').value = userInfo.username || '';
+            document.getElementById('profile-avatar-img').src = userInfo.avatar || 'https://dummyimage.com/80x80/444/fff&text=头像';
+            document.getElementById('profile-system').value = userInfo.system || '';
+            document.getElementById('profile-msg').innerText = '';
+            document.getElementById('profile-modal').style.display = 'flex';
+        }
+    });
+
+    // 购买大厅按钮事件（刷新页面回到大厅）
+    document.querySelector('.function-bar .buy-btn').addEventListener('click', function() {
+        window.location.reload();
+    });
+
+    // 店铺按钮事件
+    const shopBtn = document.getElementById('btn-shop');
+    if(shopBtn){
+        shopBtn.addEventListener('click', () => {
+            if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+                document.getElementById('login-modal').style.display = 'flex';
+            } else {
+                // 判断当前用户是否有已通过的店铺
+                const username = getCurrentUsername();
+                let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
+                const myShop = allShops.find(s => s.owner_username === username && s.status === 'approved');
+                if(myShop){
+                    // 弹出店铺信息窗口
+                    showMyShopInfo(myShop);
+                }else{
+                    // 还未通过，弹出申请窗口
+                    document.getElementById('shop-modal').style.display = 'flex';
+                }
+            }
+        });
+    }
+    document.getElementById('shop-close').addEventListener('click', () => {
+        document.getElementById('shop-modal').style.display = 'none';
+    });
+    // 用户申请店铺
+    document.getElementById('shop-apply').addEventListener('click', () => {
+        const shopName = document.getElementById('shop-name').value.trim();
+        const username = getCurrentUsername();
+        if (!shopName) {
+            document.getElementById('shop-msg').innerText = '请输入店铺名称';
+            return;
+        }
+        // 取出所有申请
+        let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
+        allShops.push({
+            shop_name: shopName,
+            owner_username: username,
+            status: 'pending',
+            created_at: new Date().toLocaleString()
+        });
+        localStorage.setItem('allShopApply', JSON.stringify(allShops));
+        document.getElementById('shop-msg').innerText = '申请已提交，等待平台审核。';
+    });
+});
+
+// 登录按钮事件
+$('#login-submit').addEventListener('click', () => {
+    const user = $('#login-username').value.trim();
+    const pwd = $('#login-password').value.trim();
+    if(user && pwd){
+        isLogin = true;
+        userInfo.username = user;
+        localStorage.setItem('isLogin', 'true');
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        $('#login-modal').style.display = 'none';
+        $('#login-msg').innerText = '';
+        alert('登录成功！');
+        // 判断是否为管理员
+        if(user === 'admin' && pwd === 'admin123'){
+            localStorage.setItem('isAdmin', 'true');
+        }else{
+            localStorage.removeItem('isAdmin');
+        }
+        updateShopBtnDisplay();
+    }else{
+        $('#login-msg').innerText = '请输入用户名和密码';
+    }
+});
+
+// 注册按钮事件
+$('#register-submit').addEventListener('click', () => {
+    const user = $('#login-username').value.trim();
+    const pwd = $('#login-password').value.trim();
+    if(user && pwd){
+        isLogin = true;
+        userInfo.username = user;
+        localStorage.setItem('isLogin', 'true');
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        $('#login-modal').style.display = 'none';
+        $('#login-msg').innerText = '';
+        alert('注册成功，已自动登录！');
+        updateShopBtnDisplay();
+    }else{
+        $('#login-msg').innerText = '请输入用户名和密码';
+    }
+});
+
+// 历史价格曲线弹窗
+window.showHistoryModal = function(itemName, dataPoints) {
+    $('#history-title').innerText = `${itemName} - 历史价格曲线`;
+    const modal = $('#history-modal');
+    const ctx = $('#priceChart').getContext('2d');
+    if (window.currentChart) window.currentChart.destroy();
+
+    // 固定显示10周
+    const weekCount = 10;
+    const weekLabels = [];
+    for(let i=1; i<=weekCount; i++) {
+        weekLabels.push(`第${i}周`);
+    }
+
+    // 获取当前商品价格作为最后一周价格
+    let currentPrice = 100;
+    const item = Array.from($$('.item')).find(el => el.querySelector('.item-title').innerText === itemName);
+    if (item) {
+        const priceText = item.querySelector('.item-price').innerText.replace(/[^\d.]/g, '');
+        currentPrice = parseFloat(priceText) || 100;
+    }
+
+    // 生成曲线数据
+    let chartData = [];
+    function pseudoRandom(seed) {
+        let x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+    }
+    let seedBase = 0;
+    for(let i=0; i<weekCount-1; i++) {
+        if (i < dataPoints.length) {
+            chartData.push(dataPoints[i]);
+        } else if (chartData.length) {
+            let last = chartData[chartData.length-1];
+            seedBase++;
+            let rand = pseudoRandom(itemName.length * 100 + seedBase);
+            let jitter = last * (0.98 + rand * 0.04);
+            chartData.push(Math.round(jitter));
+        } else {
+            chartData.push(currentPrice);
+        }
+    }
+    chartData.push(currentPrice);
+
+    window.currentChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: weekLabels,
+            datasets: [{
+                label: `价格趋势 - ${itemName}`,
+                data: chartData,
+                borderColor: '#43b581',
+                backgroundColor: 'rgba(67, 181, 129, 0.13)',
+                fill: true,
+                tension: 0.25,
+                pointRadius: 7,
+                pointHoverRadius: 12,
+                hitRadius: 18,
+                hoverRadius: 14,
+                borderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    titleFont: { size: 18 },
+                    bodyFont: { size: 18 },
+                    callbacks: {
+                        label: function(context) {
+                            return `价格：￥${context.parsed.y}`;
+                        }
+                    }
+                },
+                legend: { labels: { color: '#fff', font: { size: 18 } } }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: {
+                        color: '#fff',
+                        font: { size: 16 },
+                        callback: function(value) {
+                            return '￥' + value;
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: '价格（元）',
+                        color: '#fff',
+                        font: { size: 18 }
+                    },
+                    grid: {
+                        color: 'rgba(255,255,255,0.08)',
+                        lineWidth: 1
+                    }
+                },
+                x: {
+                    ticks: { color: '#fff', font: { size: 16 } },
+                    title: {
+                        display: true,
+                        text: '周数',
+                        color: '#fff',
+                        font: { size: 18 }
+                    },
+                    grid: {
+                        color: 'rgba(255,255,255,0.08)',
+                        lineWidth: 1
+                    }
+                }
+            },
+            onClick: (evt, elements, chart) => {
+                if (elements && elements.length > 0) {
+                    window.currentChart.tooltip.setActiveElements([elements[0]], { x: 0, y: 0 });
+                    window.currentChart.setActiveElements([elements[0]]);
+                    window.currentChart.update();
+                }
+            },
+            animation: { duration: 500 }
+        }
+    });
+    modal.style.display = 'flex';
+    // 重新绑定关闭事件
+    document.getElementById('close-history-modal').onclick = function() {
+        modal.style.display = 'none';
+    };
+};
+
+// 优化订单弹窗显示函数
+function showOrdersModal(highlightOrderId = null, buyInfo = null, page = 1) {
+    const ordersList = $('#orders-list');
+    const modal = $('#orders-modal');
+
+    let html = '';
+    // 添加右上角关闭按钮
+    html += `<button id="orders-close-x" title="关闭">×</button>`;
+
+    if (buyInfo) {
+        html += `
+            <div style="background:rgba(67,181,129,0.13);color:#43b581;padding:10px 0 10px 0;margin-bottom:10px;border-radius:6px;text-align:center;">
+                <b>购买成功！</b> 您刚刚购买了 <span style="color:#fff;">${buyInfo.title}</span>，
+                交易金额 <span style="color:#fff;">￥${buyInfo.price}</span>。
+            </div>
+            <table>
+                <tr><th>订单编号</th><th>商品</th><th>金额</th><th>时间</th></tr>
+                <tr class="highlight">
+                    <td>${buyInfo.id}</td>
+                    <td>${buyInfo.title}</td>
+                    <td>￥${buyInfo.price}</td>
+                    <td>${new Date().toLocaleString()}</td>
+                </tr>
+            </table>
+        `;
+    } else {
+        const ORDERS_PER_PAGE = 3;
+        const orders = getOrdersForUser();
+        const totalOrders = orders.length;
+        const totalPages = Math.max(1, Math.ceil(totalOrders / ORDERS_PER_PAGE));
+        page = Math.max(1, Math.min(page, totalPages));
+        const startIdx = totalOrders - page * ORDERS_PER_PAGE;
+        const endIdx = totalOrders - (page - 1) * ORDERS_PER_PAGE;
+        const pageOrders = orders.slice(Math.max(0, startIdx), endIdx).reverse();
+
+        if (!orders.length) {
+            html += `<div class="empty">暂无订单</div>`;
+        } else {
+            html += '<table><tr><th>订单编号</th><th>商品</th><th>金额</th><th>时间</th></tr>';
+            pageOrders.forEach(order => {
+                html += `<tr${highlightOrderId && order.id === highlightOrderId ? ' class="highlight"' : ''}>
+                    <td>${order.id}</td>
+                    <td>${order.title}</td>
+                    <td>￥${order.price}</td>
+                    <td>${order.time}</td>
+                </tr>`;
+            });
+            html += '</table>';
+
+            if (totalPages > 1) {
+                html += `<div class="pagination">`;
+                if (page > 1) {
+                    html += `<button class="buy-btn" id="orders-prev">上一页</button>`;
+                }
+                html += `<span>${page} / ${totalPages}</span>`;
+                if (page < totalPages) {
+                    html += `<button class="buy-btn" id="orders-next">下一页</button>`;
+                }
+                html += `</div>`;
+            }
+        }
+    }
+    ordersList.innerHTML = html;
+    modal.style.display = 'flex';
+
+    // 绑定关闭事件
+    const closeX = document.getElementById('orders-close-x');
+    if (closeX) closeX.onclick = () => { modal.style.display = 'none'; };
+
+    // 绑定分页按钮事件
+    const prevBtn = document.getElementById('orders-prev');
+    const nextBtn = document.getElementById('orders-next');
+    if (prevBtn) prevBtn.onclick = () => showOrdersModal(highlightOrderId, null, page - 1);
+    if (nextBtn) nextBtn.onclick = () => showOrdersModal(highlightOrderId, null, page + 1);
+}
+
+// 个人中心模态框
+function createProfileModal() {
+    let modal = document.getElementById('profile-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'profile-modal';
+        modal.style = 'display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:1600;justify-content:center;align-items:center;';
+        document.body.appendChild(modal);
+    }
+    let myShop = getShopForUser();
+    let shopHtml = '';
+    if (myShop) {
+        shopHtml = `<div style="margin:10px 0;color:#43b581;">我的店铺：${myShop}</div>`;
+    }
+    modal.innerHTML = `
+        <div style="background:#23272a;padding:32px 24px;border-radius:8px;min-width:320px;max-width:95vw;box-shadow:0 2px 12px #000a;text-align:center;position:relative;">
+            <h2 style="margin-bottom:16px;">个人中心</h2>
+            ${shopHtml}
+            <div style="margin-bottom:12px;">
+                <label style="display:block;margin-bottom:6px;">头像</label>
+                <img id="profile-avatar-img" src="" alt="头像" style="width:80px;height:80px;border-radius:50%;margin-bottom:8px;object-fit:cover;">
+                <input id="profile-avatar" type="file" accept="image/*" style="display:block;margin:0 auto 8px auto;">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block;margin-bottom:6px;">用户名</label>
+                <input id="profile-username" type="text" style="width:90%;padding:8px;border-radius:4px;border:none;" />
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block;margin-bottom:6px;">System绑定（如Steam ID）</label>
+                <input id="profile-system" type="text" placeholder="请输入Steam ID" style="width:90%;padding:8px;border-radius:4px;border:none;" />
+            </div>
+            <button id="profile-save" class="buy-btn" style="width:100%;">保存</button>
+            ${localStorage.getItem('isAdmin') === 'true' ? `
+                <button id="admin-panel" class="buy-btn" style="width:100%;margin-top:8px;background:#7289da;">进入后台管理</button>
+            ` : ''}
+            <button id="profile-logout" class="buy-btn" style="width:100%;margin-top:8px;background:#f66;">退出登录</button>
+            <div style="margin-top:12px;">
+                <button id="profile-close" class="buy-btn" style="background:#aaa;color:#23272a;">关闭</button>
+                <button id="profile-help" class="buy-btn" style="background:#43b581;color:#fff;margin-left:10px;">帮助中心</button>
+            </div>
+            <div id="profile-msg" style="color:#43b581;margin-top:10px;"></div>
+        </div>
+    `;
+
+    document.getElementById('profile-avatar').addEventListener('change', function(e){
+        const file = e.target.files[0];
+        if(file){
+            const reader = new FileReader();
+            reader.onload = function(evt){
+                document.getElementById('profile-avatar-img').src = evt.target.result;
+                let userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                userInfo.avatar = evt.target.result;
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('profile-save').onclick = function(){
+        let userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+        userInfo.username = document.getElementById('profile-username').value.trim();
+        userInfo.system = document.getElementById('profile-system').value.trim();
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        document.getElementById('profile-msg').innerText = '保存成功！';
+    };
+
+    document.getElementById('profile-logout').onclick = function(){
+        isLogin = false;
+        localStorage.removeItem('isLogin');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('isAdmin');
+        document.getElementById('profile-modal').style.display = 'none';
+        alert('已退出登录');
+        updateShopBtnDisplay();
+    };
+
+    document.getElementById('profile-close').onclick = function(){
+        document.getElementById('profile-modal').style.display = 'none';
+    };
+
+    // 个人中心里的帮助中心按钮
+    document.getElementById('profile-help').onclick = function(){
+        document.getElementById('help-modal').style.display = 'flex';
+    };
+
+    if(document.getElementById('admin-panel')){
+        document.getElementById('admin-panel').onclick = function(){
+            showAdminPanel();
+        };
+    }
+}
+
+// 后台管理窗口
+function showAdminPanel(){
+    let modal = document.getElementById('admin-modal');
+    if(!modal){
+        modal = document.createElement('div');
+        modal.id = 'admin-modal';
+        modal.style = 'display:flex;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index=3000;justify-content:center;align-items:center;';
+        modal.innerHTML = `
+            <div style="background:#23272a;padding:32px 28px;border-radius:10px;min-width:340px;max-width:95vw;box-shadow:0 4px 24px #000a;text-align:left;position:relative;">
+                <button id="admin-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+                <h2 style="margin-top:0;">后台管理</h2>
+                <div id="admin-content" style="max-height:60vh;overflow:auto;"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.getElementById('admin-close').onclick = function(){
+            modal.style.display = 'none';
+        };
+    }
+    let html = `<h3 style="color:#43b581;">商品管理</h3>
+    <table style="width:100%;color:#fff;font-size:14px;">
+        <tr><th>商品</th><th>库存</th><th>价格</th><th>操作</th></tr>`;
+    $$('.item').forEach((item, idx) => {
+        const title = item.querySelector('.item-title').innerText;
+        const stockEl = item.querySelector('.item-stock');
+        const priceEl = item.querySelector('.item-price');
+        html += `<tr>
+            <td>${title}</td>
+            <td><input type="number" min="0" value="${parseInt(stockEl.innerText.replace(/[^0-9]/g,''))}" style="width:60px;" id="stock-${idx}"></td>
+            <td><input type="number" min="0" value="${parseFloat(priceEl.innerText.replace(/[^\d.]/g,''))}" style="width:80px;" id="price-${idx}"></td>
+            <td><button class="buy-btn" style="padding:2px 10px;" onclick="updateItem(${idx})">保存</button></td>
+        </tr>`;
+    });
+    html += `</table>
+    <h3 style="color:#43b581;margin-top:18px;">店铺申请审核</h3>
+    <div id="shop-apply-list"></div>`;
+    document.getElementById('admin-content').innerHTML = html;
+    modal.style.display = 'flex';
+
+    // 关键：渲染店铺申请列表
+    loadAllShops();
+}
+
+// 商品更新
+window.updateItem = function(idx){
+    const items = $$('.item');
+    const item = items[idx];
+    const stockInput = document.getElementById('stock-'+idx);
+    const priceInput = document.getElementById('price-'+idx);
+    if(item && stockInput && priceInput){
+        item.querySelector('.item-stock').innerText = '库存：' + stockInput.value;
+        item.querySelector('.item-price').innerText = '￥' + priceInput.value;
+        alert('修改成功！');
+    }
+};
+
+// 客服智能问答
+const allItems = Array.from(document.querySelectorAll('.item-title')).map(el => el.innerText);
+const qaList = [
+    { q: ['如何购买', '买', '购买'], a: '在商品列表点击“购买”按钮，登录后即可下单。' },
+    { q: ['如何提现', '提现'], a: '请前往个人中心，绑定提现信息后联系客服处理。' },
+    { q: ['联系方式', '客服', '联系'], a: '您可以通过客服邮箱：support@csgo-platform.com 联系我们。' },
+    { q: ['订单', '交易记录'], a: '点击页面上方“订单交易记录”按钮可查看您的所有订单。' },
+    { q: ['个人中心', '账户', '编辑'], a: '点击“个人中心”可编辑您的账户信息和绑定Steam等。' },
+    { q: ['帮助', '常见问题'], a: '点击“帮助中心”可查看常见问题，或直接在此提问。' }
+];
+function getAnswer(question) {
+    question = question.trim();
+    for (const item of allItems) {
+        if (question.includes(item) || question.replace(/\s/g, '').includes(item.replace(/\s/g, ''))) {
+            return `商品“${item}”当前可在平台购买，点击“购买”按钮即可下单。如需历史价格，点击“查看历史价格曲线”。`;
+        }
+    }
+    for (const qa of qaList) {
+        if (qa.q.some(key => question.includes(key))) {
+            return qa.a;
+        }
+    }
+    return '客服：很抱歉，您的问题暂未收录。请详细描述您的问题，或联系客服邮箱：support@csgo-platform.com';
+}
+$('#btn-service').addEventListener('click', () => {
+    $('#service-modal').style.display = 'flex';
+    setTimeout(() => {
+        const chat = $('#service-chat');
+        chat.scrollTop = chat.scrollHeight;
+    }, 100);
+});
+$('#service-close').addEventListener('click', () => {
+    $('#service-modal').style.display = 'none';
+});
+$('#service-send').addEventListener('click', () => {
+    const input = $('#service-input');
+    const chat = $('#service-chat');
+    const userMsg = input.value.trim();
+    if (!userMsg) return;
+    chat.innerHTML += `<div class="chat-bubble user">
+        <span style="background:#43b581;color:#fff;padding:8px 14px;border-radius:16px 16px 4px 16px;display:inline-block;max-width:80%;">${userMsg}</span>
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" style="width:28px;height:28px;border-radius:50%;margin-left:6px;">
+    </div>`;
+    chat.scrollTop = chat.scrollHeight;
+    input.value = '';
+    const typingId = 'typing-' + Date.now();
+    chat.innerHTML += `<div id="${typingId}" class="chat-bubble bot"><img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;margin-right:6px;"><span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">正在输入...</span></div>`;
+    chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => {
+        const reply = getAnswer(userMsg);
+        const typingDiv = document.getElementById(typingId);
+        if (typingDiv) {
+            typingDiv.innerHTML = `<img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;margin-right:6px;">
+            <span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">${reply}</span>`;
+        }
+        chat.innerHTML += `<div class="chat-bubble bot" style="margin-top:10px;">
+            <img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;margin-right:6px;">
+            <span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">如需进一步帮助，请联系客服邮箱：support@csgo-platform.com</span>
+        </div>`;
+        chat.scrollTop = chat.scrollHeight;
+    }, 1500);
+});
+
+// 管理员点击“拒绝”
+window.rejectShop = function(idx) {
+    let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
+    allShops[idx].status = 'rejected'; // 设置为拒绝
+    localStorage.setItem('allShopsApply', JSON.stringify(allShops)); // 修正这里的 key
+    loadAllShops();
+};
+
+
+// 示例数据结构（实际应从本地存储获取玩家上架的所有武器）
+const rentGoodsData = [
+    { name: "AK-47 | 火蛇", price: 12000, stock: 5, status: "onsale", img: "https://img.picui.cn/free/2025/06/03/683f12ded973a.png" },
+    { name: "AWP | 美杜莎", price: 40000, stock: 2, status: "presale", img: "https://img.picui.cn/free/2025/06/03/683f162dd544d.png" },
+    { name: "M4A4 | 龙王", price: 120, stock: 10, status: "onsale", img: "https://img.picui.cn/free/2025/06/03/683f19bb4d5ec.png" },
+    { name: "USP | 力矩", price: 15, stock: 20, status: "wanted", img: "https://img.picui.cn/free/2025/06/03/683f19ba54d17.png" }
+];
+
+// 打开租赁弹窗
+document.getElementById('btn-rent').onclick = function() {
+    showRentModal();
+};
+document.getElementById('rent-close').onclick = function() {
+    document.getElementById('rent-modal').style.display = 'none';
+};
+
+function showRentModal() {
+    // 检查是否已绑定账户
+    if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+        document.getElementById('login-modal').style.display = 'flex';
+        return;
+    }
+    renderRentGoods('onsale');
+    document.getElementById('rent-modal').style.display = 'flex';
+}
+
+// 排序切换
+document.getElementById('rent-sort').onchange = function() {
+    renderRentGoods(this.value);
+};
+
+// 渲染商品
+function renderRentGoods(status) {
+    // 这里应从本地存储获取玩家上架的所有武器，并按 status 过滤
+    const goods = rentGoodsData.filter(g => g.status === status);
+    const list = document.getElementById('rent-goods-list');
+    if (!goods.length) {
+        list.innerHTML = '<div style="color:#aaa;text-align:center;width:100%;">暂无该类型武器</div>';
+        return;
+    }
+    let html = '';
+    goods.forEach((g, idx) => {
+        html += `<div class="rent-card" data-idx="${idx}">
+        <img src="${g.img}" alt="${g.name}">
+        <div class="rent-title">${g.name}</div>
+        ${status !== 'wanted' ? `<div class="rent-info">库存：${g.stock}</div>` : ''}
+        <div class="rent-price">￥${g.price}</div>
+        <button class="rent-buy-btn">${status === 'wanted' ? '求购' : '购买'}</button>
+    </div>`;
+    });
+
+    list.innerHTML = html;
+
+    // 动态修改批量按钮文字
+    const batchBtn = document.getElementById('rent-batch-buy');
+    if (status === 'wanted') {
+        batchBtn.innerText = '批量求购';
+    } else {
+        batchBtn.innerText = '批量购买';
+    }
+
+    // 单选/多选
+    let selected = [];
+    list.querySelectorAll('.rent-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.classList.contains('rent-buy-btn')) return;
+            card.classList.toggle('selected');
+            const idx = parseInt(card.getAttribute('data-idx'));
+            if (card.classList.contains('selected')) {
+                if (!selected.includes(idx)) selected.push(idx);
+            } else {
+                selected = selected.filter(i => i !== idx);
+            }
+        });
+    });
+
+    // 绑定所有购买/求购按钮事件
+    list.querySelectorAll('.rent-buy-btn').forEach((btn, idx) => {
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+                document.getElementById('login-modal').style.display = 'flex';
+                return;
+            }
+            if (status === 'wanted') {
+                // 求购逻辑：只显示武器名称、类型和价格
+                showRentActionModal(
+                    `<b>已发起求购</b><br>武器：${goods[idx].name}<br>类型：求购<br>价格：￥${goods[idx].price}`
+                );
+                let wantedList = JSON.parse(localStorage.getItem('wantedList') || '[]');
+                const username = getCurrentUsername();
+                wantedList.push({
+                    username,
+                    item: goods[idx].name,
+                    price: goods[idx].price,
+                    time: new Date().toLocaleString()
+                });
+                localStorage.setItem('wantedList', JSON.stringify(wantedList));
+            } else {
+                // 正常购买：减少库存并刷新
+                if (goods[idx].stock > 0) {
+                    goods[idx].stock--;
+                    showRentActionModal(
+                        `<b>购买成功</b><br>武器：${goods[idx].name}<br>类型：${status === 'onsale' ? '在售' : '预售'}<br>价格：￥${goods[idx].price}`
+                    );
+                    renderRentGoods(status); // 刷新库存显示
+                } else {
+                    showRentActionModal('该商品已售罄！');
+                }
+            }
+        };
+    });
+
+    // 批量购买/求购
+    batchBtn.onclick = function() {
+        if (!selected.length) {
+            showRentActionModal('请先选择要批量购买/求购的武器');
+            return;
+        }
+        if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+            document.getElementById('login-modal').style.display = 'flex';
+            return;
+        }
+        if (status === 'wanted') {
+            let wantedList = JSON.parse(localStorage.getItem('wantedList') || '[]');
+            const username = getCurrentUsername();
+            const names = selected.map(i => goods[i].name);
+            names.forEach(name => {
+                wantedList.push({
+                    username,
+                    item: name,
+                    price: goods.find(g => g.name === name).price,
+                    time: new Date().toLocaleString()
+                });
+            });
+            localStorage.setItem('wantedList', JSON.stringify(wantedList));
+            showRentActionModal('已批量发起求购，等待其他玩家/商户响应！');
+        } else {
+            const names = selected.map(i => goods[i].name).join('、');
+            showRentActionModal('批量购买成功：' + names);
+        }
+    };
+}
+
+// 租赁操作提示弹窗
+function showRentActionModal(msg) {
+    document.getElementById('rent-action-content').innerHTML = msg;
+    document.getElementById('rent-action-modal').style.display = 'flex';
+}
+document.getElementById('rent-action-close').onclick = function() {
+    document.getElementById('rent-action-modal').style.display = 'none';
+};
+    </script>
+</body>
+</html>
