@@ -1520,74 +1520,46 @@ window.updateItem = function(idx){
     }
 };
 
-// 客服智能问答
-const allItems = Array.from(document.querySelectorAll('.item-title')).map(el => el.innerText);
-const qaList = [
-    { q: ['如何购买', '买', '购买'], a: '在商品列表点击“购买”按钮，登录后即可下单。' },
-    { q: ['如何提现', '提现'], a: '请前往个人中心，绑定提现信息后联系客服处理。' },
-    { q: ['联系方式', '客服', '联系'], a: '您可以通过客服邮箱：support@csgo-platform.com 联系我们。' },
-    { q: ['订单', '交易记录'], a: '点击页面上方“订单交易记录”按钮可查看您的所有订单。' },
-    { q: ['个人中心', '账户', '编辑'], a: '点击“个人中心”可编辑您的账户信息和绑定Steam等。' },
-    { q: ['帮助', '常见问题'], a: '点击“帮助中心”可查看常见问题，或直接在此提问。' }
-];
-function getAnswer(question) {
-    question = question.trim();
-    for (const item of allItems) {
-        if (question.includes(item) || question.replace(/\s/g, '').includes(item.replace(/\s/g, ''))) {
-            return `商品“${item}”当前可在平台购买，点击“购买”按钮即可下单。如需历史价格，点击“查看历史价格曲线”。`;
-        }
+// 管理员后台：加载所有店铺申请
+function loadAllShops() {
+    let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
+    let html = '';
+    if (!allShops.length) {
+        html = '<div style="color:#aaa;">暂无店铺申请</div>';
+    } else {
+        html = `<table style="width:100%;color:#fff;font-size:14px;">
+            <tr><th>店铺名称</th><th>申请人</th><th>状态</th><th>时间</th><th>操作</th></tr>`;
+        allShops.forEach((shop, idx) => {
+            html += `<tr>
+                <td>${shop.shop_name}</td>
+                <td>${shop.owner_username}</td>
+                <td>${shop.status === 'pending' ? '待审核' : (shop.status === 'approved' ? '已通过' : '已拒绝')}</td>
+                <td>${shop.created_at || ''}</td>
+                <td>
+                    ${shop.status === 'pending' ? `
+                        <button class="buy-btn" style="padding:2px 10px;" onclick="approveShop(${idx})">通过</button>
+                        <button class="buy-btn" style="padding:2px 10px;background:#f66;" onclick="rejectShop(${idx})">拒绝</button>
+                    ` : ''}
+                </td>
+            </tr>`;
+        });
+        html += '</table>';
     }
-    for (const qa of qaList) {
-        if (qa.q.some(key => question.includes(key))) {
-            return qa.a;
-        }
-    }
-    return '客服：很抱歉，您的问题暂未收录。请详细描述您的问题，或联系客服邮箱：support@csgo-platform.com';
+    document.getElementById('shop-apply-list').innerHTML = html;
 }
-$('#btn-service').addEventListener('click', () => {
-    $('#service-modal').style.display = 'flex';
-    setTimeout(() => {
-        const chat = $('#service-chat');
-        chat.scrollTop = chat.scrollHeight;
-    }, 100);
-});
-$('#service-close').addEventListener('click', () => {
-    $('#service-modal').style.display = 'none';
-});
-$('#service-send').addEventListener('click', () => {
-    const input = $('#service-input');
-    const chat = $('#service-chat');
-    const userMsg = input.value.trim();
-    if (!userMsg) return;
-    chat.innerHTML += `<div class="chat-bubble user">
-        <span style="background:#43b581;color:#fff;padding:8px 14px;border-radius:16px 16px 4px 16px;display:inline-block;max-width:80%;">${userMsg}</span>
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/user-male-circle.png" style="width:28px;height:28px;border-radius:50%;margin-left:6px;">
-    </div>`;
-    chat.scrollTop = chat.scrollHeight;
-    input.value = '';
-    const typingId = 'typing-' + Date.now();
-    chat.innerHTML += `<div id="${typingId}" class="chat-bubble bot"><img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;margin-right:6px;"><span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">正在输入...</span></div>`;
-    chat.scrollTop = chat.scrollHeight;
-    setTimeout(() => {
-        const reply = getAnswer(userMsg);
-        const typingDiv = document.getElementById(typingId);
-        if (typingDiv) {
-            typingDiv.innerHTML = `<img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;margin-right:6px;">
-            <span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">${reply}</span>`;
-        }
-        chat.innerHTML += `<div class="chat-bubble bot" style="margin-top:10px;">
-            <img src="https://img.icons8.com/color/48/000000/robot-2.png" style="width:28px;height:28px;border-radius:50%;margin-right:6px;">
-            <span style="background:#2c2f33;color:#fff;padding:8px 14px;border-radius:16px 16px 16px 4px;display:inline-block;max-width:80%;">如需进一步帮助，请联系客服邮箱：support@csgo-platform.com</span>
-        </div>`;
-        chat.scrollTop = chat.scrollHeight;
-    }, 1500);
-});
 
+// 管理员点击“通过”
+window.approveShop = function(idx) {
+    let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
+    allShops[idx].status = 'approved';
+    localStorage.setItem('allShopApply', JSON.stringify(allShops));
+    loadAllShops();
+};
 // 管理员点击“拒绝”
 window.rejectShop = function(idx) {
     let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
-    allShops[idx].status = 'rejected'; // 设置为拒绝
-    localStorage.setItem('allShopsApply', JSON.stringify(allShops)); // 修正这里的 key
+    allShops[idx].status = 'rejected';
+    localStorage.setItem('allShopsApply', JSON.stringify(allShops));
     loadAllShops();
 };
 
