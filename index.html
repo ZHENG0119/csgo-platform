@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>CSGO虚拟交易平台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link id="site-favicon" rel="icon" type="image/png" href="https://img.icons8.com/color/48/000000/counter-strike.png">
     <style>
         body {
     font-family: Arial, sans-serif;
@@ -30,11 +32,11 @@ header h1 {
     font-weight: bold;
     letter-spacing: 2px;
     font-family: 'FZYaoti', 'STXingkai', '华文行楷', '行楷', 'KaiTi', '楷体', cursive, serif;
-    color: transparent;
-    background: linear-gradient(90deg, #888 0%, #e0e0e0 100%);
+    background: linear-gradient(90deg, #fff 0%, #e0e0e0 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    text-shadow: 0 2px 8px #000a;
+    color: transparent;
+    text-shadow: 0 2px 12px #23272a, 0 2px 8px #000a;
     transition: background-image 0.5s;
 }
 
@@ -647,11 +649,235 @@ header h1 {
     text-align: center;
     letter-spacing: 2px;
 }
+
+@media (max-width: 600px) {
+    body {
+        font-size: 15px;
+    }
+    .function-bar {
+        flex-direction: column;
+        gap: 10px 0;
+        padding: 10px 0 6px 0;
+    }
+    .function-bar .buy-btn {
+        min-width: 0;
+        width: 98vw;
+        font-size: 16px;
+        padding: 10px 0;
+    }
+    .search-bar input {
+        width: 70vw;
+        min-width: 120px;
+        font-size: 15px;
+    }
+    .items {
+        flex-direction: column;
+        gap: 16px 0;
+        padding: 10px 0 20px 0;
+    }
+    .item {
+        width: 96vw;
+        min-width: 0;
+        padding: 14px 6vw 16px 6vw;
+    }
+    .item img {
+        width: 80px;
+        height: 80px;
+    }
+    #orders-modal .modal-content,
+    #history-modal .modal-content,
+    #about-modal > div,
+    #help-modal > div,
+    #shop-modal > div,
+    #admin-modal > div,
+    #profile-modal > div,
+    #service-modal > div,
+    #myshop-modal > div {
+        min-width: 0 !important;
+        width: 98vw !important;
+        padding: 16px 2vw !important;
+    }
+    #rent-modal .modal-content {
+        min-width: 0 !important;
+        width: 98vw !important;
+        padding: 16px 2vw !important;
+    }
+    .rent-card {
+        width: 96vw;
+        min-width: 0;
+        padding: 10px 2vw 12px 2vw;
+    }
+    #rent-goods-list {
+        flex-direction: column;
+        gap: 12px 0 !important;
+    }
+    #service-modal > div {
+        min-width: 0 !important;
+        width: 98vw !important;
+        padding: 10px 2vw !important;
+    }
+    #service-chat {
+        max-height: 180px !important;
+        font-size: 15px;
+    }
+    #service-input {
+        font-size: 15px;
+    }
+    #apply-shop-modal .modal-content {
+        min-width: 0 !important;
+        width: 98vw !important;
+        padding: 16px 2vw !important;
+    }
+    #admin-modal .modal-content {
+        min-width: 0 !important;
+        width: 98vw !important;
+        padding: 16px 2vw !important;
+    }
+    #orders-list table,
+    #admin-content table {
+        font-size: 13px;
+    }
+    #orders-list th, #orders-list td,
+    #admin-content th, #admin-content td {
+        padding: 6px 2px;
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 6px 0;
+    }
+}
+
+/* 新增：公告栏收缩时的小竖条 */
+#notice-bar.mini {
+    left: 0 !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+    transition: left 0.3s, width 0.3s;
+}
+#notice-bar.mini #notice-content {
+    display: none !important;
+}
+#notice-bar.mini #notice-toggle {
+    width: 38px !important;
+    height: 80px !important;
+    border-radius: 0 18px 18px 0 !important;
+    margin-left: 0 !important;
+    background: #43b581;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 4px 12px #0004;
+    font-size: 18px;
+    position: relative;
+}
+#notice-bar.mini #notice-toggle .mini-label {
+    writing-mode: vertical-rl;
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 2px;
+    letter-spacing: 2px;
+    user-select: none;
+}
+#notice-bar.mini #notice-toggle .mini-arrow {
+    font-size: 18px;
+    color: #fff;
+    margin-top: 2px;
+    user-select: none;
+}
+
+#chat-avatar-btn {
+    position: fixed;
+    right: 32px;
+    bottom: 32px;
+    z-index: 9999;
+    background: none !important;   /* 透明背景 */
+    border: none;
+    box-shadow: 0 2px 12px #0004;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    cursor: pointer;
+    transition: box-shadow 0.18s, right 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#chat-avatar-btn.hide {
+    right: -32px; /* 只露出一半 */
+    opacity: 0.6;
+    transition: right 0.5s, opacity 0.3s;
+}
+#chat-avatar-btn {
+    opacity: 1;
+}
+#chat-avatar-btn:hover {
+    opacity: 1;
+}
+#chat-avatar-btn .avatar-bg {
+    background: none !important;   /* 透明背景 */
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+}
+#chat-avatar-btn img.avatar-outline {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+    pointer-events: none;
+    background: none;
+}
+
+#chat-avatar-popup {
+    position: fixed;
+    right: 100px;
+    bottom: 38px;
+    z-index: 10000;
+    background: rgba(255,255,255,0.97);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px #0006;
+    min-width: 180px;
+    max-width: 320px;
+    padding: 18px 22px 18px 22px;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    animation: fadeIn 0.25s;
+}
+#chat-avatar-popup .close-btn {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 22px;
+    cursor: pointer;
+}
+#chat-avatar-bubble {
+    color: #23272a;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-top: 8px;
+    min-width: 120px;
+    max-width: 260px;
+    word-break: break-all;
+}
     </style>
 </head>
 <body>
     <header>
-        <h1>CSGO虚拟交易平台</h1>
+        <div style="text-align:center;margin-bottom:4px;">
+            <span style="display:inline-block;background:#43b581;color:#fff;font-size:13px;padding:2px 12px;border-radius:8px;letter-spacing:2px;margin-bottom:6px;">Beta 版</span>
+        </div>
+        <h1 style="background: linear-gradient(90deg, #fff 0%, #e0e0e0 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 2px 8px #000a;">游易宝CSGO虚拟交易平台</h1>
     </header>
     <!-- 功能入口栏 -->
     <div class="function-bar">
@@ -778,12 +1004,14 @@ header h1 {
             <button id="about-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
             <h2 style="margin-top:0;">关于平台</h2>
             <div style="line-height:2;font-size:16px;color:#eee;">
-                CSGO虚拟交易平台，致力于为玩家提供安全、便捷的饰品交易服务。<br>
+                CSGO虚拟交易平台，致力于为玩家提供安全、便捷、透明的饰品交易体验。<br>
                 <b>平台特色：</b><br>
-                1. 实时价格曲线，行情透明<br>
-                2. 多样化商品，丰富选择<br>
-                3. 订单管理，交易有保障<br>
-                4. 个人中心，信息可编辑<br>
+                1. 订单链式存证，模拟区块链技术，交易数据可追溯、不可篡改<br>
+                2. 虚拟饰品资产唯一归属，支持饰品转让与溯源<br>
+                3. 实时价格曲线，行情透明，助力玩家决策<br>
+                4. 多样化商品，丰富选择，满足不同玩家需求<br>
+                5. 个人中心与店铺系统，支持玩家自主经营<br>
+                6. 便捷的订单管理与客服支持，交易有保障<br>
                 <br>
                 如有疑问请联系客服，祝您交易愉快！
             </div>
@@ -869,9 +1097,156 @@ header h1 {
             <div id="rent-action-content" style="font-size:17px;color:#fff;"></div>
         </div>
     </div>
+    <!-- 工程师模式设置模态框 -->
+    <div id="engineer-modal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:9999;justify-content:center;align-items:center;background:rgba(0,0,0,0.5);">
+        <div style="background:#23272a;padding:32px 28px;border-radius:12px;min-width:320px;max-width:95vw;box-shadow:0 4px 24px #000a;text-align:left;position:relative;">
+            <button id="engineer-close" style="position:absolute;right:16px;top:12px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;">×</button>
+            <h2 style="margin-top:0;color:#43b581;">工程模式设置</h2>
+            <div style="margin-bottom:16px;">
+                <label>网页标题：</label>
+                <input id="engineer-title" type="text" style="width:80%;padding:6px;border-radius:4px;border:none;" />
+            </div>
+            <div style="margin-bottom:16px;">
+                <label>背景图片：</label>
+                <input id="engineer-bg" type="text" placeholder="图片URL" style="width:80%;padding:6px;border-radius:4px;border:none;" />
+            </div>
+            <div style="margin-bottom:16px;">
+                <label>亮度：</label>
+                <input id="engineer-brightness" type="range" min="0.5" max="1.5" step="0.01" value="1" style="width:60%;">
+                <span id="engineer-brightness-val">1</span>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label>透明度：</label>
+                <input id="engineer-opacity" type="range" min="0.3" max="1" step="0.01" value="1" style="width:60%;">
+                <span id="engineer-opacity-val">1</span>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label>背景图片管理：</label>
+                <input id="engineer-bg-add" type="text" placeholder="图片URL" style="width:60%;padding:6px;border-radius:4px;border:none;" />
+                <button id="engineer-bg-add-btn" class="buy-btn" style="padding:2px 10px;">添加</button>
+                <button id="engineer-bg-reset-btn" class="buy-btn" style="padding:2px 10px;background:#f66;">重置为默认</button>
+                <div id="engineer-bg-list" style="margin-top:8px;"></div>
+            </div>
+            <div style="margin-bottom:16px;">
+                <button id="engineer-reset-btn" class="buy-btn" style="background:#aaa;color:#23272a;">重置亮度/透明度</button>
+            </div>
+            <button id="engineer-save" class="buy-btn" style="width:100%;margin-top:10px;">保存设置</button>
+        </div>
+    </div>
+    <!-- 页面加载指示器 -->
+    <div id="page-loader" style="position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:999999;background:#23272a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.7s;">
+    <div style="color:#43b581;font-size:2.2em;letter-spacing:2px;margin-bottom:32px;font-weight:bold;">CSGO虚拟交易平台</div>
+    <div style="width:240px;height:16px;background:#222;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px #000a;">
+        <div id="loader-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#43b581,#2e8b57);transition:width 0.3s;"></div>
+    </div>
+    <div id="loader-percent" style="color:#fff;margin-top:16px;font-size:1.1em;letter-spacing:1px;">0%</div>
+</div>
+    <!-- Q版小人按钮和弹窗 -->
+    <button id="chat-avatar-btn" title="和我聊聊吧">
+        <span class="avatar-bg">
+            <img class="avatar-outline" src="https://img.icons8.com/pastel-glyph/64/43b581/person-male--v2.png" alt="像素Q版小人" />
+        </span>
+    </button>
+    <div id="chat-avatar-popup">
+        <button class="close-btn" title="关闭">×</button>
+        <div class="bubble" id="chat-avatar-bubble"></div>
+    </div>
+
+    <!-- 公告栏 -->
+<div id="notice-bar" style="position:fixed;left:0;top:90px;z-index:9999;transition:left 0.3s;display:flex;align-items:center;">
+    <div id="notice-content" style="background:rgba(255,255,255,0.82);color:#43b581;padding:16px 24px 16px 18px;border-radius:0 18px 18px 0;box-shadow:2px 4px 16px #0006;min-width:220px;max-width:340px;font-size:15px;line-height:1.7;white-space:normal;">
+        <b style="font-size:16px;">公告</b>
+        <div id="notice-text" style="margin-top:8px;">
+            欢迎来到CSGO虚拟交易平台！
+            <div style="margin:12px 0 0 0;">
+                <b style="color:#23272a;">平台结构与交易框架</b>
+                <div style="margin:10px 0 0 0;">
+                    <style>
+                    .mindmap-box {text-align:left;}
+                    .mindmap-node {display:inline-block;background:rgba(255,255,255,0.82);color:#43b581;border:1px solid #43b581;border-radius:8px;padding:4px 10px;font-weight:bold;margin:0 6px;}
+                    .mindmap-arrow {display:inline-block;color:#888;font-size:18px;vertical-align:middle;margin:0 2px;}
+                    .mindmap-row {margin:6px 0;}
+                    .mindmap-desc {color:#666;font-size:13px;margin-left:2px;}
+                    .mindmap-ban {color:#d9534f;font-weight:bold;}
+                    </style>
+                    <div class="mindmap-box">
+                        <div class="mindmap-row">
+                            <span class="mindmap-node">用户</span>
+                            <span class="mindmap-arrow">⇄</span>
+                            <span class="mindmap-node">平台</span>
+                            <span class="mindmap-arrow">⇄</span>
+                            <span class="mindmap-node">商户</span>
+                        </div>
+                        <div class="mindmap-row" style="margin-left:18px;">
+                            <span class="mindmap-arrow">⇄</span>
+                            <span class="mindmap-desc">管理员监管</span>
+                        </div>
+                        <div class="mindmap-row" style="margin-left:18px;">
+                            <span class="mindmap-node">管理员</span>
+                            <span class="mindmap-desc">（由平台指认，监督用户及商户）</span>
+                        </div>
+                        <div class="mindmap-row" style="margin-top:8px;">
+                            <span class="mindmap-desc">• 用户：浏览/购买饰品，管理订单</span><br>
+                            <span class="mindmap-desc">• 商户：上架商品，处理订单</span><br>
+                            <span class="mindmap-desc">• 管理员：发现违规后，将违规用户或商户信息上报平台</span>
+                        </div>
+                        <div class="mindmap-row" style="margin-top:8px;">
+                            <span class="mindmap-desc">• 订单链式存证，确保数据可追溯</span><br>
+                            <span class="mindmap-desc">• 价格曲线透明，交易流程公开</span>
+                        </div>
+                        <div class="mindmap-row" style="margin-top:10px;">
+                            <span class="mindmap-arrow" style="color:#d9534f;">违规处理流程：</span>
+                            <span class="mindmap-node" style="border-color:#d9534f;color:#d9534f;">违规用户/商户</span>
+                            <span class="mindmap-arrow" style="color:#d9534f;">→</span>
+                            <span class="mindmap-node" style="border-color:#f0ad4e;color:#f0ad4e;">管理员</span>
+                            <span class="mindmap-arrow" style="color:#f0ad4e;">上报</span>
+                            <span class="mindmap-node" style="border-color:#23272a;color:#23272a;">平台</span>
+                            <span class="mindmap-arrow" style="color:#23272a;">→</span>
+                            <span class="mindmap-node mindmap-ban">封禁处理</span>
+                        </div>
+                        <div class="mindmap-row" style="margin-top:4px;">
+                            <span class="mindmap-desc" style="color:#d9534f;">
+                                <b>违规处理流程：</b><br>
+                                1. 管理员发现用户或商户违规行为<br>
+                                2. 管理员将违规信息发送给平台<br>
+                                3. 平台对违规用户或商户进行封禁处理，并展示封禁结果
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="notice-toggle" style="background:#43b581;border:none;color:#fff;width:28px;height:60px;border-radius:0 12px 12px 0;cursor:pointer;font-size:18px;margin-left:-8px;box-shadow:2px 4px 12px #0004;">&lt;</button>
+</div>
+
     <script>
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
+
+// 公告栏收缩/展开逻辑
+const noticeBar = $('#notice-bar');
+const noticeToggle = $('#notice-toggle');
+let noticeHidden = false;
+
+function setNoticeBarState(hidden) {
+    noticeHidden = hidden;
+    if (noticeHidden) {
+        noticeBar.classList.add('mini');
+        // 设置按钮内容为竖排公告+箭头
+        noticeToggle.innerHTML = `<span class="mini-label">公告</span><span class="mini-arrow">&gt;</span>`;
+    } else {
+        noticeBar.classList.remove('mini');
+        noticeToggle.innerHTML = '&lt;'; // 左箭头
+    }
+}
+
+noticeToggle.addEventListener('click', () => {
+    setNoticeBarState(!noticeHidden);
+});
+
+// 页面加载时自动展开
+setNoticeBarState(false);
 
 // 背景图片轮换
 const bgImages = [
@@ -913,11 +1288,29 @@ function getCurrentUsername() {
         return null;
     }
 }
+
+// 简单字符串哈希函数
+function simpleHash(str) {
+    let hash = 5381;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    }
+    return hash >>> 0;
+}
+
+// 保存订单时链式存证（每个用户一条伪区块链）
 function saveOrderForUser(order) {
     const username = getCurrentUsername();
     if (!username) return;
     let allOrders = JSON.parse(localStorage.getItem('userOrders') || '{}');
     if (!allOrders[username]) allOrders[username] = [];
+    // 获取前一个订单哈希
+    let prevHash = allOrders[username].length ? allOrders[username][allOrders[username].length - 1].hash : '0';
+    // 生成本订单哈希
+    let orderStr = JSON.stringify(order) + prevHash;
+    let hash = simpleHash(orderStr).toString(16);
+    order.hash = hash;
+    order.prevHash = prevHash;
     allOrders[username].push(order);
     localStorage.setItem('userOrders', JSON.stringify(allOrders));
 }
@@ -991,7 +1384,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
                 const title = item.querySelector('.item-title').innerText;
                 const priceElement = item.querySelector('.item-price');
-                const price = priceElement.innerText.replace(/[\D.]/g, '');
+                const price = priceElement.innerText.replace(/[^\d.]/g, ''); // 只保留数字和小数点
                 const stockElement = item.querySelector('.item-stock');
                 let stock = parseInt(stockElement.innerText.replace(/[^0-9]/g, ''));
 
@@ -1000,10 +1393,13 @@ window.addEventListener('DOMContentLoaded', () => {
                     stockElement.innerText = `库存：${stock}`;
 
                     const orderId = 'OD' + Date.now() + Math.floor(Math.random() * 10000);
-                    const newOrder = { id: orderId, title, price, time: new Date().toLocaleString() };
+                    const newOrder = { id: orderId, title, price: parseFloat(price), time: new Date().toLocaleString() };
                     saveOrderForUser(newOrder);
 
-                    showOrdersModal(orderId, newOrder);
+                    // 新增：获取带hash的订单
+                    const orders = getOrdersForUser();
+                    const lastOrder = orders[orders.length - 1];
+                    showOrdersModal(orderId, lastOrder);
                 } else {
                     alert('该商品已售罄！');
                 }
@@ -1047,6 +1443,14 @@ window.addEventListener('DOMContentLoaded', () => {
         $('#help-modal').style.display = 'none';
     });
 
+    // === 新增客服按钮事件 ===
+    $('#btn-service').addEventListener('click', () => {
+        $('#service-modal').style.display = 'flex';
+    });
+    document.getElementById('service-close').onclick = function() {
+        document.getElementById('service-modal').style.display = 'none';
+    };
+
     // 关于我们按钮事件
     $('#btn-about').addEventListener('click', () => {
         $('#about-modal').style.display = 'flex';
@@ -1070,35 +1474,20 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 购买大厅按钮事件（刷新页面回到大厅）
-    document.querySelector('.function-bar .buy-btn').addEventListener('click', function() {
-        window.location.reload();
+    // 店铺按钮事件
+    $('#btn-shop').addEventListener('click', function() {
+        if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
+            document.getElementById('login-modal').style.display = 'flex';
+            return;
+        }
+        document.getElementById('shop-modal').style.display = 'flex';
     });
 
-    // 店铺按钮事件
-    const shopBtn = document.getElementById('btn-shop');
-    if(shopBtn){
-        shopBtn.addEventListener('click', () => {
-            if (!localStorage.getItem('isLogin') || localStorage.getItem('isLogin') !== 'true') {
-                document.getElementById('login-modal').style.display = 'flex';
-            } else {
-                // 判断当前用户是否有已通过的店铺
-                const username = getCurrentUsername();
-                let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
-                const myShop = allShops.find(s => s.owner_username === username && s.status === 'approved');
-                if(myShop){
-                    // 弹出店铺信息窗口
-                    showMyShopInfo(myShop);
-                }else{
-                    // 还未通过，弹出申请窗口
-                    document.getElementById('shop-modal').style.display = 'flex';
-                }
-            }
-        });
-    }
+    // 关闭店铺申请弹窗
     document.getElementById('shop-close').addEventListener('click', () => {
         document.getElementById('shop-modal').style.display = 'none';
     });
+
     // 用户申请店铺
     document.getElementById('shop-apply').addEventListener('click', () => {
         const shopName = document.getElementById('shop-name').value.trim();
@@ -1117,7 +1506,51 @@ window.addEventListener('DOMContentLoaded', () => {
         });
         localStorage.setItem('allShopApply', JSON.stringify(allShops));
         document.getElementById('shop-msg').innerText = '申请已提交，等待平台审核。';
+        
+        // 3秒后自动关闭弹窗
+        setTimeout(() => {
+            document.getElementById('shop-modal').style.display = 'none';
+            document.getElementById('shop-name').value = '';
+            document.getElementById('shop-msg').innerText = '';
+        }, 3000);
     });
+
+    // 购买大厅按钮事件（刷新页面回到大厅，但不显示遮罩）
+    document.querySelector('.function-bar .buy-btn').addEventListener('click', function() {
+        sessionStorage.setItem('skipLoader', '1');
+        window.location.reload();
+    });
+
+    // 页面加载指示器动画
+    (function(){
+        let percent = 0;
+        const loader = document.getElementById('page-loader');
+        const bar = document.getElementById('loader-bar');
+        const percentText = document.getElementById('loader-percent');
+        // 判断是否跳过加载动画
+        if(sessionStorage.getItem('skipLoader') === '1') {
+            loader.style.display = 'none';
+            sessionStorage.removeItem('skipLoader');
+            return;
+        }
+        // 模拟进度条加载
+        function animateLoader() {
+            percent += Math.random() * 13 + 7; // 每次增加7~20
+            if(percent > 100) percent = 100;
+            bar.style.width = percent + '%';
+            percentText.innerText = Math.floor(percent) + '%';
+            loader.style.opacity = 1 - percent/120; // 渐隐
+            if(percent < 100) {
+                setTimeout(animateLoader, 180 + Math.random()*120);
+            } else {
+                setTimeout(()=>{
+                    loader.style.opacity = 0;
+                    setTimeout(()=>{ loader.style.display = 'none'; }, 700);
+                }, 350);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', animateLoader);
+    })();
 });
 
 // 登录按钮事件
@@ -1138,6 +1571,12 @@ $('#login-submit').addEventListener('click', () => {
         }else{
             localStorage.removeItem('isAdmin');
         }
+        // 判断是否为工程账号
+        if(user === 'GCMX' && pwd === '123'){
+            localStorage.setItem('isEngineer', 'true');
+        }else{
+            localStorage.removeItem('isEngineer');
+        }
         updateShopBtnDisplay();
     }else{
         $('#login-msg').innerText = '请输入用户名和密码';
@@ -1156,6 +1595,7 @@ $('#register-submit').addEventListener('click', () => {
         $('#login-modal').style.display = 'none';
         $('#login-msg').innerText = '';
         alert('注册成功，已自动登录！');
+        // 注册不允许直接成为工程账号
         updateShopBtnDisplay();
     }else{
         $('#login-msg').innerText = '请输入用户名和密码';
@@ -1210,8 +1650,8 @@ window.showHistoryModal = function(itemName, dataPoints) {
         type: 'line',
         data: {
             labels: weekLabels,
-            datasets: [{
-                label: `价格趋势 - ${itemName}`,
+                       datasets: [{
+                               label: `价格趋势 - ${itemName}`,
                 data: chartData,
                 borderColor: '#43b581',
                 backgroundColor: 'rgba(67, 181, 129, 0.13)',
@@ -1265,7 +1705,7 @@ window.showHistoryModal = function(itemName, dataPoints) {
                         lineWidth: 1
                     }
                 },
-                x: {
+                               x: {
                     ticks: { color: '#fff', font: { size: 16 } },
                     title: {
                         display: true,
@@ -1280,7 +1720,7 @@ window.showHistoryModal = function(itemName, dataPoints) {
                 }
             },
             onClick: (evt, elements, chart) => {
-                if (elements && elements.length > 0) {
+                               if (elements && elements.length > 0) {
                     window.currentChart.tooltip.setActiveElements([elements[0]], { x: 0, y: 0 });
                     window.currentChart.setActiveElements([elements[0]]);
                     window.currentChart.update();
@@ -1296,7 +1736,7 @@ window.showHistoryModal = function(itemName, dataPoints) {
     };
 };
 
-// 优化订单弹窗显示函数
+// 优化订单弹窗显示函数，增加区块哈希展示
 function showOrdersModal(highlightOrderId = null, buyInfo = null, page = 1) {
     const ordersList = $('#orders-list');
     const modal = $('#orders-modal');
@@ -1312,12 +1752,16 @@ function showOrdersModal(highlightOrderId = null, buyInfo = null, page = 1) {
                 交易金额 <span style="color:#fff;">￥${buyInfo.price}</span>。
             </div>
             <table>
-                <tr><th>订单编号</th><th>商品</th><th>金额</th><th>时间</th></tr>
+                <tr><th>订单编号</th><th>商品</th><th>金额</th><th>时间</th><th>区块哈希</th></tr>
                 <tr class="highlight">
                     <td>${buyInfo.id}</td>
                     <td>${buyInfo.title}</td>
                     <td>￥${buyInfo.price}</td>
-                    <td>${new Date().toLocaleString()}</td>
+                    <td>${buyInfo.time}</td>
+                    <td style="font-size:12px;word-break:break-all;">
+                        ${buyInfo.hash || ''}<br>
+                        <span style="color:#888;">${buyInfo.prevHash || ''}</span>
+                    </td>
                 </tr>
             </table>
         `;
@@ -1334,13 +1778,17 @@ function showOrdersModal(highlightOrderId = null, buyInfo = null, page = 1) {
         if (!orders.length) {
             html += `<div class="empty">暂无订单</div>`;
         } else {
-            html += '<table><tr><th>订单编号</th><th>商品</th><th>金额</th><th>时间</th></tr>';
+            html += '<table><tr><th>订单编号</th><th>商品</th><th>金额</th><th>时间</th><th>区块哈希</th></tr>';
             pageOrders.forEach(order => {
                 html += `<tr${highlightOrderId && order.id === highlightOrderId ? ' class="highlight"' : ''}>
                     <td>${order.id}</td>
                     <td>${order.title}</td>
                     <td>￥${order.price}</td>
                     <td>${order.time}</td>
+                    <td style="font-size:12px;word-break:break-all;">
+                        ${order.hash || ''}<br>
+                        <span style="color:#888;">${order.prevHash || ''}</span>
+                    </td>
                 </tr>`;
             });
             html += '</table>';
@@ -1407,6 +1855,9 @@ function createProfileModal() {
             ${localStorage.getItem('isAdmin') === 'true' ? `
                 <button id="admin-panel" class="buy-btn" style="width:100%;margin-top:8px;background:#7289da;">进入后台管理</button>
             ` : ''}
+            ${(localStorage.getItem('isEngineer') === 'true') ? `
+                <button id="engineer-mode" class="buy-btn" style="width:100%;margin-top:8px;background:#43b581;">工程模式</button>
+            ` : ''}
             <button id="profile-logout" class="buy-btn" style="width:100%;margin-top:8px;background:#f66;">退出登录</button>
             <div style="margin-top:12px;">
                 <button id="profile-close" class="buy-btn" style="background:#aaa;color:#23272a;">关闭</button>
@@ -1443,6 +1894,7 @@ function createProfileModal() {
         localStorage.removeItem('isLogin');
         localStorage.removeItem('userInfo');
         localStorage.removeItem('isAdmin');
+        localStorage.removeItem('isEngineer'); // 退出时清除工程师标记
         document.getElementById('profile-modal').style.display = 'none';
         alert('已退出登录');
         updateShopBtnDisplay();
@@ -1483,6 +1935,13 @@ function showAdminPanel(){
             modal.style.display = 'none';
         };
     }
+
+
+
+
+
+
+
     let html = `<h3 style="color:#43b581;">商品管理</h3>
     <table style="width:100%;color:#fff;font-size:14px;">
         <tr><th>商品</th><th>库存</th><th>价格</th><th>操作</th></tr>`;
@@ -1559,7 +2018,7 @@ window.approveShop = function(idx) {
 window.rejectShop = function(idx) {
     let allShops = JSON.parse(localStorage.getItem('allShopApply') || '[]');
     allShops[idx].status = 'rejected';
-    localStorage.setItem('allShopsApply', JSON.stringify(allShops));
+    localStorage.setItem('allShops', JSON.stringify(allShops));
     loadAllShops();
 };
 
@@ -1716,6 +2175,189 @@ function showRentActionModal(msg) {
 document.getElementById('rent-action-close').onclick = function() {
     document.getElementById('rent-action-modal').style.display = 'none';
 };
+
+// 工程师模式弹窗逻辑
+document.body.addEventListener('click', function(e){
+    if(e.target && e.target.id === 'engineer-mode'){
+        // 读取当前设置
+        $('#engineer-title').value = document.querySelector('header h1').innerText; // 这里改为h1内容
+        $('#engineer-bg').value = localStorage.getItem('engineer-bg') || '';
+        $('#engineer-brightness').value = localStorage.getItem('engineer-brightness') || 1;
+        $('#engineer-brightness-val').innerText = $('#engineer-brightness').value;
+        $('#engineer-opacity').value = localStorage.getItem('engineer-opacity') || 1;
+        $('#engineer-opacity-val').innerText = $('#engineer-opacity').value;
+        $('#engineer-modal').style.display = 'flex';
+    }
+});
+$('#engineer-close').onclick = function(){
+    $('#engineer-modal').style.display = 'none';
+};
+$('#engineer-brightness').oninput = function(){
+    $('#engineer-brightness-val').innerText = this.value;
+};
+$('#engineer-opacity').oninput = function(){
+    $('#engineer-opacity-val').innerText = this.value;
+};
+$('#engineer-save').onclick = function(){
+    // 保存设置
+    const title = $('#engineer-title').value.trim();
+    const bg = $('#engineer-bg').value.trim();
+    const brightness = $('#engineer-brightness').value;
+    const opacity = $('#engineer-opacity').value;
+    if(title) {
+        document.title = title;
+        document.querySelector('header h1').innerText = title; // 同步h1
+    }
+    if(bg){
+        document.body.style.background = `url('${bg}') no-repeat center center fixed`;
+        document.body.style.backgroundSize = 'cover';
+        localStorage.setItem('engineer-bg', bg);
+    }
+    document.body.style.filter = `brightness(${brightness}) opacity(${opacity})`;
+    localStorage.setItem('engineer-brightness', brightness);
+    localStorage.setItem('engineer-opacity', opacity);
+    if(title) localStorage.setItem('engineer-title', title);
+    $('#engineer-modal').style.display = 'none';
+};
+
+// 背景图片管理
+function renderEngineerBgList(){
+    let imgs = JSON.parse(localStorage.getItem('engineer-bg-list') || '[]');
+    let html = imgs.map((url,i)=>`
+        <div style="display:flex;align-items:center;margin-bottom:4px;">
+            <span style="font-size:13px;word-break:break-all;">${url}</span>
+            <button class="buy-btn" style="margin-left:8px;padding:2px 8px;background:#f66;" onclick="removeEngineerBg(${i})">删除</button>
+        </div>
+    `).join('');
+    $('#engineer-bg-list').innerHTML = html || '<span style="color:#aaa;">暂无自定义背景</span>';
+}
+window.removeEngineerBg = function(idx){
+    let imgs = JSON.parse(localStorage.getItem('engineer-bg-list') || '[]');
+    imgs.splice(idx,1);
+    localStorage.setItem('engineer-bg-list', JSON.stringify(imgs));
+    renderEngineerBgList();
+};
+
+// 添加背景图片
+$('#engineer-bg-add-btn').onclick = function(){
+    let url = $('#engineer-bg-add').value.trim();
+    if(!url) return;
+    let imgs = JSON.parse(localStorage.getItem('engineer-bg-list') || '[]');
+    imgs.push(url);
+    localStorage.setItem('engineer-bg-list', JSON.stringify(imgs));
+    renderEngineerBgList();
+    $('#engineer-bg-add').value = '';
+};
+// 重置背景图片
+$('#engineer-bg-reset-btn').onclick = function(){
+    localStorage.removeItem('engineer-bg-list');
+    renderEngineerBgList();
+};
+
+// 工程师模式弹窗打开时渲染图片列表
+document.body.addEventListener('click', function(e){
+    if(e.target && e.target.id === 'engineer-mode'){
+        renderEngineerBgList();
+    }
+});
+
+// 一键重置亮度/透明度
+$('#engineer-reset-btn').onclick = function(){
+    $('#engineer-brightness').value = 1;
+    $('#engineer-brightness-val').innerText = 1;
+    $('#engineer-opacity').value = 1;
+    $('#engineer-opacity-val').innerText = 1;
+    document.body.style.filter = 'brightness(1) opacity(1)';
+    localStorage.setItem('engineer-brightness', 1);
+    localStorage.setItem('engineer-opacity', 1);
+};
+
+// Q版小人按钮和弹窗
+const chatSayings = [
+    "天天开心，万事顺意！",
+    "路漫漫其修远兮，吾将上下而求索。",
+    "莫愁前路无知己，天下谁人不识君。",
+    "长风破浪会有时，直挂云帆济沧海。",
+    "宝剑锋从磨砺出，梅花香自苦寒来。",
+    "少壮不努力，老大徒伤悲。",
+    "海内存知己，天涯若比邻。",
+    "千里之行，始于足下。",
+    "生活明朗，万物可爱。",
+    "愿你所求皆如愿，所行化坦途。"
+];
+
+let chatAvatarBtn = document.getElementById('chat-avatar-btn');
+let chatAvatarPopup = document.getElementById('chat-avatar-popup');
+let chatAvatarBubble = document.getElementById('chat-avatar-bubble');
+let hideTimer = null;
+
+// 显示/隐藏弹窗
+chatAvatarBtn.onclick = function() {
+    if (chatAvatarPopup.style.display === 'block') {
+        chatAvatarPopup.style.display = 'none';
+    } else {
+        chatAvatarBubble.innerText = chatSayings[Math.floor(Math.random() * chatSayings.length)];
+        chatAvatarPopup.style.display = 'block';
+        chatAvatarBtn.classList.remove('hide');
+        resetHideTimer();
+    }
+};
+document.querySelector('#chat-avatar-popup .close-btn').onclick = function() {
+    chatAvatarPopup.style.display = 'none';
+    resetHideTimer();
+};
+
+// 自动隐藏到最右侧
+function resetHideTimer() {
+    if (hideTimer) clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+        chatAvatarPopup.style.display = 'none';
+        chatAvatarBtn.classList.add('hide');
+    }, 10000); // 10秒无操作自动隐藏
+}
+
+// 鼠标悬停小人时不隐藏
+chatAvatarBtn.onmouseenter = function() {
+    if (hideTimer) clearTimeout(hideTimer);
+    chatAvatarBtn.classList.remove('hide');
+};
+chatAvatarBtn.onmouseleave = function() {
+    resetHideTimer();
+};
+chatAvatarPopup.onmouseenter = function() {
+    if (hideTimer) clearTimeout(hideTimer);
+};
+chatAvatarPopup.onmouseleave = function() {
+    resetHideTimer();
+};
+
+// 页面加载后自动开始隐藏倒计时
+resetHideTimer();
+
+(function(){
+    let percent = 0;
+    const loader = document.getElementById('page-loader');
+    const bar = document.getElementById('loader-bar');
+    const percentText = document.getElementById('loader-percent');
+    // 模拟进度条加载
+    function animateLoader() {
+        percent += Math.random() * 13 + 7; // 每次增加7~20
+        if(percent > 100) percent = 100;
+        bar.style.width = percent + '%';
+        percentText.innerText = Math.floor(percent) + '%';
+        loader.style.opacity = 1 - percent/120; // 渐隐
+        if(percent < 100) {
+            setTimeout(animateLoader, 180 + Math.random()*120);
+        } else {
+            setTimeout(()=>{
+                loader.style.opacity = 0;
+                setTimeout(()=>{ loader.style.display = 'none'; }, 700);
+            }, 350);
+        }
+    }
+    window.addEventListener('DOMContentLoaded', animateLoader);
+})();
     </script>
+
 </body>
 </html>
